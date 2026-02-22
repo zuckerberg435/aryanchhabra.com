@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aryan Chhabra</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --warm-white: #faf8f3;
+    --ink: #1a1a14;
+    --forest: #1e3a2f;
+    --gold: #b8902a;
+    --gold-light: #d4aa50;
+    --muted: #7a7264;
+    --rule: rgba(26,26,20,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--warm-white);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    cursor: none;
+    overflow-x: hidden;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--forest);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: multiply;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
+  }
+  .cursor.hover { width: 16px; height: 16px; background: var(--gold); }
+  .cursor-ring.hover { width: 56px; height: 56px; border-color: var(--forest); }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* Navigation */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 60px;
+    mix-blend-mode: multiply;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--forest);
+  }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0;
+    width: 0; height: 1px;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 120px 60px 80px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 1s 0.2s forwards;
+  }
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px; height: 1px;
+    background: var(--gold);
+  }
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 7vw, 6.5rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--forest);
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 1s 0.4s forwards;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+  }
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 1s 0.6s forwards;
+  }
+  .hero-description {
+    font-size: 0.78rem;
+    line-height: 1.9;
+    color: var(--muted);
+    max-width: 380px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 1s 0.8s forwards;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 1s 1s forwards;
+  }
+  .btn-primary {
+    background: var(--forest);
+    color: var(--cream);
+    padding: 14px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: none;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+  .btn-secondary {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+  }
+  .btn-secondary:hover { color: var(--forest); }
+  .btn-secondary::after { content: '→'; transition: transform 0.3s; }
+  .btn-secondary:hover::after { transform: translateX(4px); }
+
+  .hero-right {
+    position: relative;
+    background: var(--cream);
+    overflow: hidden;
+  }
+  .hero-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(30,58,47,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(184,144,42,0.1) 0%, transparent 50%);
+  }
+  .hero-visual {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-monogram {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28vw;
+    font-weight: 300;
+    color: rgba(30,58,47,0.05);
+    line-height: 1;
+    user-select: none;
+    animation: float 8s ease-in-out infinite;
+  }
+  .hero-pills {
+    position: absolute;
+    bottom: 60px;
+    left: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid var(--rule);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeLeft 0.8s forwards;
+  }
+  .pill:nth-child(1) { animation-delay: 1.2s; }
+  .pill:nth-child(2) { animation-delay: 1.4s; }
+  .pill:nth-child(3) { animation-delay: 1.6s; }
+  .pill-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    right: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 1s 1.5s forwards;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-20px) rotate(2deg); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeLeft {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Section shared */
+  section { position: relative; }
+  .section-rule {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 64px;
+  }
+  .section-num {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 300;
+    color: var(--forest);
+    line-height: 1.1;
+  }
+  .section-title em { font-style: italic; }
+  .rule-line {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* About */
+  #about {
+    padding: 120px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    background: var(--warm-white);
+    border-top: 1px solid var(--rule);
+  }
+  .about-left .section-rule { margin-bottom: 40px; }
+  .about-pullquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1.4;
+    color: var(--forest);
+    margin-bottom: 32px;
+  }
+  .about-pullquote em { font-style: italic; color: var(--gold); }
+  .about-body {
+    font-size: 0.78rem;
+    line-height: 2;
+    color: var(--muted);
+  }
+  .about-body p + p { margin-top: 20px; }
+  .about-right {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stat-row {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .stat-row:last-child { border: none; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1;
+    min-width: 100px;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .stat-label strong {
+    display: block;
+    color: var(--ink);
+    font-weight: 400;
+    margin-bottom: 2px;
+  }
+
+  /* Philosophy */
+  #philosophy {
+    padding: 120px 60px;
+    background: var(--forest);
+    color: var(--cream);
+    overflow: hidden;
+    position: relative;
+  }
+  #philosophy::before {
+    content: 'PHILOSOPHY';
+    position: absolute;
+    top: 60px; right: -20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12vw;
+    font-weight: 300;
+    color: rgba(255,255,255,0.03);
+    pointer-events: none;
+    letter-spacing: -0.05em;
+  }
+  .philosophy-header { margin-bottom: 80px; }
+  .philosophy-header .section-num { color: var(--gold-light); }
+  .philosophy-header .section-title { color: var(--cream); }
+  .philosophy-header .rule-line { background: rgba(255,255,255,0.1); }
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+  .philosophy-card {
+    background: var(--forest);
+    padding: 48px 40px;
+    transition: background 0.4s;
+  }
+  .philosophy-card:hover { background: rgba(184,144,42,0.1); }
+  .philosophy-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem;
+    font-weight: 300;
+    color: rgba(212,170,80,0.3);
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+  .philosophy-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .philosophy-card p {
+    font-size: 0.75rem;
+    line-height: 1.9;
+    color: rgba(245,240,232,0.55);
+  }
+
+  /* Experience */
+  #experience {
+    padding: 120px 60px;
+    background: var(--cream);
+  }
+  .experience-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+    margin-top: 80px;
+  }
+  .exp-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: sticky;
+    top: 100px;
+    align-self: flex-start;
+  }
+  .exp-nav-item {
+    padding: 16px 20px;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: none;
+    border-left: 2px solid transparent;
+    transition: all 0.3s;
+  }
+  .exp-nav-item.active, .exp-nav-item:hover {
+    color: var(--forest);
+    border-left-color: var(--gold);
+    background: rgba(184,144,42,0.06);
+  }
+  .exp-content { display: flex; flex-direction: column; gap: 48px; }
+  .exp-item {
+    padding: 40px;
+    background: var(--warm-white);
+    border: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .exp-item:hover {
+    border-color: var(--gold);
+    transform: translateX(4px);
+  }
+  .exp-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+    transform: scaleY(0);
+    transition: transform 0.3s;
+    transform-origin: top;
+  }
+  .exp-item:hover::before { transform: scaleY(1); }
+  .exp-period {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .exp-role {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--forest);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .exp-company {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+  }
+  .exp-desc {
+    font-size: 0.78rem;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+
+  /* Writing / Interests */
+  #interests {
+    padding: 120px 60px;
+    background: var(--warm-white);
+    border-top: 1px solid var(--rule);
+  }
+  .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-top: 64px;
+    background: var(--rule);
+  }
+  .interest-card {
+    background: var(--warm-white);
+    padding: 48px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+  }
+  .interest-card:hover { background: var(--cream); }
+  .interest-icon {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .interest-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--forest);
+    margin-bottom: 12px;
+  }
+  .interest-card p {
+    font-size: 0.73rem;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+  .interest-card::after {
+    content: '→';
+    position: absolute;
+    bottom: 32px; right: 32px;
+    font-size: 1.2rem;
+    color: var(--gold);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .interest-card:hover::after { opacity: 1; transform: translateX(0); }
+
+  /* Contact */
+  #contact {
+    padding: 120px 60px;
+    background: var(--ink);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .contact-left .section-title { color: var(--cream); font-size: 3.5rem; }
+  .contact-left .section-num { color: var(--gold-light); }
+  .contact-left .rule-line { background: rgba(255,255,255,0.08); }
+  .contact-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(245,240,232,0.6);
+    margin-top: 32px;
+    line-height: 1.6;
+  }
+  .contact-right {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .contact-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    text-decoration: none;
+    color: var(--cream);
+    transition: padding 0.3s;
+    cursor: none;
+    font-size: 0.8rem;
+  }
+  .contact-link:hover { padding-left: 16px; }
+  .contact-link-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.4);
+  }
+  .contact-link-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+  }
+  .contact-link-arrow {
+    color: var(--gold-light);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+  }
+  .contact-link:hover .contact-link-arrow { transform: translateX(6px); }
+
+  /* Footer */
+  footer {
+    padding: 28px 60px;
+    background: var(--ink);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer span {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: rgba(245,240,232,0.3);
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    nav { padding: 24px 24px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 100px 24px 60px; }
+    #about { grid-template-columns: 1fr; padding: 80px 24px; }
+    #philosophy { padding: 80px 24px; }
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .experience-layout { grid-template-columns: 1fr; }
+    .exp-nav { display: none; }
+    #experience { padding: 80px 24px; }
+    .interests-grid { grid-template-columns: 1fr 1fr; }
+    #interests { padding: 80px 24px; }
+    #contact { grid-template-columns: 1fr; padding: 80px 24px; }
+    footer { padding: 20px 24px; flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <div class="nav-logo">Aryan Chhabra</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#philosophy">Philosophy</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#interests">Interests</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Financial Restructuring · Singapore</div>
+    <h1 class="hero-name">Aryan<br><em>Chhabra</em></h1>
+    <p class="hero-subtitle">From Dehradun to the world</p>
+    <p class="hero-description">
+      Advisor, thinker, and perpetual learner fascinated by the art of value creation — from zero to one and beyond. Currently in financial restructuring at Deloitte, advising large conglomerates on debt modification and cashflow preservation.
+    </p>
+    <div class="hero-actions">
+      <a href="#experience" class="btn-primary">View My Work</a>
+      <a href="#contact" class="btn-secondary">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="hero-monogram">AC</div>
+    </div>
+    <div class="hero-pills">
+      <div class="pill"><span class="pill-dot"></span> NUS Graduate</div>
+      <div class="pill"><span class="pill-dot"></span> Deloitte · Financial Restructuring</div>
+      <div class="pill"><span class="pill-dot"></span> Zero to One Thinker</div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left reveal">
+    <div class="section-rule">
+      <span class="section-num">01</span>
+      <h2 class="section-title">The <em>Story</em></h2>
+      <div class="rule-line"></div>
+    </div>
+    <p class="about-pullquote">
+      A leap of faith at 17 — from a <em>sleepy town</em> in the Himalayas to the heart of Southeast Asia.
+    </p>
+    <div class="about-body">
+      <p>I grew up in Dehradun, a tranquil city nestled in the foothills of the Himalayas. At 17, I made a decisive move to Singapore to pursue my undergraduate studies at the National University of Singapore (NUS).</p>
+      <p>College wasn't just about coursework — it was about forming connections that challenged my worldview, gaining experiences that tested my convictions, and developing intellectual rigor that would define my professional path.</p>
+      <p>Today, I work in financial restructuring at Deloitte, where I advise large conglomerates navigating financial distress. I help them modify existing debt structures to conserve cashflow and preserve operations — work that sits at the intersection of finance, strategy, and human judgment.</p>
+    </div>
+  </div>
+  <div class="about-right reveal">
+    <div class="stat-row">
+      <div class="stat-num">17</div>
+      <div class="stat-label"><strong>Age of departure</strong>Dehradun → Singapore, a leap of faith</div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-num">NUS</div>
+      <div class="stat-label"><strong>National University of Singapore</strong>Undergraduate education, Southeast Asia</div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-num">∞</div>
+      <div class="stat-label"><strong>Mental models collected</strong>In pursuit of worldly wisdom, always</div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-num">0→1</div>
+      <div class="stat-label"><strong>The fascination</strong>The value creation process that drives everything</div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy">
+  <div class="philosophy-header section-rule reveal">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Ways of <em>Thinking</em></h2>
+    <div class="rule-line"></div>
+  </div>
+  <div class="philosophy-grid reveal">
+    <div class="philosophy-card">
+      <div class="philosophy-num">I</div>
+      <h3>Worldly Wisdom</h3>
+      <p>Charlie Munger's idea of a latticework of mental models resonates deeply. I'm on a never-ending quest to understand how things work — across disciplines, industries, and cultures. The toolbox expands with every book, conversation, and deal.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="philosophy-num">II</div>
+      <h3>Zero to One</h3>
+      <p>I'm fascinated by business stories and the value creation process. What makes something go from nothing to something? What makes a company truly defensible? These are the questions that keep me reading at midnight.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="philosophy-num">III</div>
+      <h3>Contrarian Clarity</h3>
+      <p>The most valuable insights often contradict prevailing wisdom. I seek to form independent views — tested by evidence, sharpened through debate, and held with conviction but without rigidity.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-rule reveal">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Experience & <em>Education</em></h2>
+    <div class="rule-line"></div>
+  </div>
+  <div class="experience-layout">
+    <div class="exp-nav reveal">
+      <div class="exp-nav-item active">Professional</div>
+      <div class="exp-nav-item">Education</div>
+      <div class="exp-nav-item">Personal</div>
+    </div>
+    <div class="exp-content reveal">
+      <div class="exp-item">
+        <div class="exp-period">Current Position</div>
+        <div class="exp-role">Financial Restructuring Advisor</div>
+        <div class="exp-company">Deloitte · Singapore</div>
+        <p class="exp-desc">Advising large conglomerates facing financial distress on modifying their existing debt structure to conserve cashflow — enabling them to preserve operations through turbulent periods. Work spans financial modelling, creditor negotiations, and strategic advisory at the intersection of law, finance, and business.</p>
+      </div>
+      <div class="exp-item">
+        <div class="exp-period">Undergraduate</div>
+        <div class="exp-role">B.A. — National University of Singapore</div>
+        <div class="exp-company">NUS · Singapore</div>
+        <p class="exp-desc">Moved from Dehradun at 17 to pursue undergraduate education at one of Asia's top universities. Formed lasting connections, challenged prior beliefs through rigorous coursework, and grew in every domain — intellectually, personally, and professionally.</p>
+      </div>
+      <div class="exp-item">
+        <div class="exp-period">Roots</div>
+        <div class="exp-role">Growing Up in Dehradun</div>
+        <div class="exp-company">Uttarakhand, India</div>
+        <p class="exp-desc">A sleepy town nestled in the foothills of the Himalayas. The pace of life there taught patience. The mountains taught perspective. The community taught the value of connection. It shaped a particular way of seeing the world that no city could replicate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERESTS -->
+<section id="interests">
+  <div class="section-rule reveal">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Fascinations & <em>Pursuits</em></h2>
+    <div class="rule-line"></div>
+  </div>
+  <div class="interests-grid reveal">
+    <div class="interest-card">
+      <span class="interest-icon">📚</span>
+      <h3>Business Stories</h3>
+      <p>The narrative behind great companies — how founders think, how markets emerge, and how competitive moats are built and eroded over time.</p>
+    </div>
+    <div class="interest-card">
+      <span class="interest-icon">🧠</span>
+      <h3>Mental Models</h3>
+      <p>Expanding the latticework of thinking tools — from Bayesian reasoning to second-order effects. Every new model is another lens on reality.</p>
+    </div>
+    <div class="interest-card">
+      <span class="interest-icon">📈</span>
+      <h3>Investing</h3>
+      <p>Understanding the principles of value creation and capital allocation. Studying great investors and the frameworks they use to see through complexity.</p>
+    </div>
+    <div class="interest-card">
+      <span class="interest-icon">🌏</span>
+      <h3>Cross-cultural Thinking</h3>
+      <p>What Singapore taught me that India didn't, and vice versa. How geography and culture shape the mental maps we use to navigate life.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left reveal">
+    <div class="section-rule">
+      <span class="section-num">05</span>
+      <h2 class="section-title" style="color:var(--cream)">Let's <em style="color:var(--gold-light)">Connect</em></h2>
+      <div class="rule-line" style="background:rgba(255,255,255,0.08)"></div>
+    </div>
+    <p class="contact-tagline">
+      "Always up for a conversation about business, investing, ideas, or anything worth thinking about."
+    </p>
+  </div>
+  <div class="contact-right reveal">
+    <a href="https://www.linkedin.com/in/aryan-chhabra-nus/" class="contact-link" target="_blank">
+      <div>
+        <div class="contact-link-label">Professional Network</div>
+        <div class="contact-link-value">LinkedIn</div>
+      </div>
+      <span class="contact-link-arrow">→</span>
+    </a>
+    <a href="mailto:aryanchhabra3@gmail.com" class="contact-link">
+      <div>
+        <div class="contact-link-label">Email</div>
+        <div class="contact-link-value">aryanchhabra3@gmail.com</div>
+      </div>
+      <span class="contact-link-arrow">→</span>
+    </a>
+    <a href="https://twitter.com/aryanchhabra" class="contact-link" target="_blank">
+      <div>
+        <div class="contact-link-label">Microblogging</div>
+        <div class="contact-link-value">Twitter / X</div>
+      </div>
+      <span class="contact-link-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Aryan Chhabra · Singapore</span>
+  <span>Dehradun → NUS → Deloitte</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button, .exp-nav-item, .philosophy-card, .interest-card, .dice').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), 100);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach
