@@ -667,11 +667,15 @@
 
   /* Scroll reveal */
   .reveal {
-    opacity: 0;
-    transform: translateY(30px);
+    opacity: 1;
+    transform: translateY(0);
     transition: opacity 0.8s, transform 0.8s;
   }
-  .reveal.visible {
+  .js-ready .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .js-ready .reveal.visible {
     opacity: 1;
     transform: translateY(0);
   }
@@ -940,14 +944,15 @@
     el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
   });
 
-  // Scroll reveal
+  // Scroll reveal - content visible by default, animates if JS works
+  document.body.classList.add('js-ready');
   const reveals = document.querySelectorAll('.reveal');
   const obs = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
+    entries.forEach((e) => {
       if (e.isIntersecting) {
         setTimeout(() => e.target.classList.add('visible'), 100);
         obs.unobserve(e.target);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
   reveals.forEach
