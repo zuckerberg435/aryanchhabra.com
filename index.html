@@ -643,62 +643,65 @@
 
   /* Mobile */
   /* Hamburger button */
-  .hamburger {
+  #hamburger {
     display: none;
     flex-direction: column;
-    gap: 5px;
-    padding: 12px;
-    z-index: 201;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    position: relative;
+    gap: 6px;
+    padding: 10px;
     background: none;
     border: none;
-    outline: none;
-    -webkit-appearance: none;
-    appearance: none;
+    cursor: pointer;
+    z-index: 300;
+    -webkit-tap-highlight-color: transparent;
   }
-  .hamburger span {
+  #hamburger span {
     display: block;
-    width: 24px; height: 2px;
+    width: 26px;
+    height: 2px;
     background: var(--forest);
-    transition: all 0.3s;
   }
-  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-  .hamburger.open span:nth-child(2) { opacity: 0; }
-  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
   /* Mobile nav overlay */
-  .mobile-nav {
+  #mobileNav {
     display: none;
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: var(--warm-white);
-    z-index: 198;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--cream);
+    z-index: 299;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 32px;
-    -webkit-overflow-scrolling: touch;
+    gap: 36px;
   }
-  .mobile-nav.open { display: flex; }
-  .mobile-nav a {
+  #mobileNav.open {
+    display: flex;
+  }
+  #closeMenu {
+    position: absolute;
+    top: 24px; right: 24px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--forest);
+    cursor: pointer;
+    padding: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mnLink {
     font-family: "Cormorant Garamond", serif;
     font-size: 2.5rem;
-    font-weight: 300;
+    font-weight: 400;
     color: var(--forest);
     text-decoration: none;
-    letter-spacing: 0.05em;
-    transition: color 0.3s;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
-  .mobile-nav a:hover { color: var(--gold); }
 
   @media (max-width: 900px) {
     nav { padding: 20px 24px; background: var(--warm-white); }
     .nav-links { display: none; }
-    .hamburger { display: flex; }
-    #hamburger { display: flex !important; }
+    #hamburger { display: flex; }
     .hero { grid-template-columns: 1fr; min-height: auto; }
     .hero-left { padding: 90px 24px 40px; }
     .hero-name { font-size: clamp(3rem, 12vw, 5rem); }
@@ -754,20 +757,20 @@
     <li><a href="#interests">Interests</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <button id="hamburger" type="button" onclick="toggleMenu()" style="display:none;flex-direction:column;gap:6px;padding:10px;background:none;border:none;cursor:pointer;z-index:9999;position:relative;">
-    <span style="display:block;width:26px;height:2px;background:#1e3a2f;"></span>
-    <span style="display:block;width:26px;height:2px;background:#1e3a2f;"></span>
-    <span style="display:block;width:26px;height:2px;background:#1e3a2f;"></span>
+  <button id="hamburger" type="button">
+    <span></span>
+    <span></span>
+    <span></span>
   </button>
 </nav>
 
-<div id="mobileNav" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#f5f0e8;z-index:99999;flex-direction:column;align-items:center;justify-content:center;gap:40px;opacity:1;">
-  <button onclick="toggleMenu()" style="position:absolute;top:28px;right:28px;background:none;border:none;font-size:2.2rem;cursor:pointer;color:#1e3a2f;line-height:1;padding:8px;">&#x2715;</button>
-  <a href="#about" onclick="toggleMenu()" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2.5rem;font-weight:400;color:#1e3a2f;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">About</a>
-  <a href="#philosophy" onclick="toggleMenu()" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2.5rem;font-weight:400;color:#1e3a2f;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">Philosophy</a>
-  <a href="#experience" onclick="toggleMenu()" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2.5rem;font-weight:400;color:#1e3a2f;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">Experience</a>
-  <a href="#interests" onclick="toggleMenu()" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2.5rem;font-weight:400;color:#1e3a2f;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">Interests</a>
-  <a href="#contact" onclick="toggleMenu()" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2.5rem;font-weight:400;color:#1e3a2f;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">Contact</a>
+<div id="mobileNav">
+  <button id="closeMenu">&#x2715;</button>
+  <a href="#about" class="mnLink">About</a>
+  <a href="#philosophy" class="mnLink">Philosophy</a>
+  <a href="#experience" class="mnLink">Experience</a>
+  <a href="#interests" class="mnLink">Interests</a>
+  <a href="#contact" class="mnLink">Contact</a>
 </div>
 
 <!-- HERO -->
@@ -971,28 +974,25 @@
 </footer>
 
 <script>
-  // Mobile menu - defined first so onclick always works
-  function toggleMenu() {
-    var nav = document.getElementById('mobileNav');
-    var isOpen = nav.style.display === 'flex';
-    if (isOpen) {
-      nav.style.display = 'none';
-      nav.style.visibility = 'hidden';
-      document.body.style.overflow = '';
-    } else {
-      nav.style.display = 'flex';
-      nav.style.visibility = 'visible';
-      nav.style.opacity = '1';
-      nav.style.zIndex = '99999';
-      document.body.style.overflow = 'hidden';
-    }
+  // Mobile menu
+  var hamburger = document.getElementById('hamburger');
+  var mobileNav = document.getElementById('mobileNav');
+  var closeMenu = document.getElementById('closeMenu');
+
+  function openNav() {
+    mobileNav.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNav() {
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
   }
 
-  // Show hamburger on mobile
-  if (window.innerWidth <= 900) {
-    var hb = document.getElementById('hamburger');
-    if (hb) hb.style.display = 'flex';
-  }
+  hamburger.addEventListener('click', openNav);
+  closeMenu.addEventListener('click', closeNav);
+  document.querySelectorAll('.mnLink').forEach(function(link) {
+    link.addEventListener('click', closeNav);
+  });
 
   // Cursor - desktop only
   var cursor = document.getElementById('cursor');
