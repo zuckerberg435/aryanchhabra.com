@@ -47,7 +47,7 @@
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
-    z-index: 100;
+    z-index: 200;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -653,6 +653,11 @@
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     position: relative;
+    background: none;
+    border: none;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
   }
   .hamburger span {
     display: block;
@@ -670,7 +675,7 @@
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: var(--warm-white);
-    z-index: 199;
+    z-index: 198;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -690,7 +695,7 @@
   .mobile-nav a:hover { color: var(--gold); }
 
   @media (max-width: 900px) {
-    nav { padding: 20px 24px; }
+    nav { padding: 20px 24px; background: var(--warm-white); }
     .nav-links { display: none; }
     .hamburger { display: flex; }
     .hero { grid-template-columns: 1fr; min-height: auto; }
@@ -748,9 +753,9 @@
     <li><a href="#interests">Interests</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <div class="hamburger" id="hamburger">
+  <button class="hamburger" id="hamburger" type="button" aria-label="Open menu">
     <span></span><span></span><span></span>
-  </div>
+  </button>
 </nav>
 
 <div class="mobile-nav" id="mobileNav">
@@ -989,26 +994,45 @@
   }
 
   // Hamburger menu
-  function toggleMenu() {
-    var h = document.getElementById('hamburger');
-    var nav = document.getElementById('mobileNav');
-    h.classList.toggle('open');
-    nav.classList.toggle('open');
-    document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+  // Hamburger menu — reliable cross-browser implementation
+  var hamburger = document.getElementById('hamburger');
+  var mobileNav = document.getElementById('mobileNav');
+
+  function openMenu() {
+    hamburger.classList.add('open');
+    mobileNav.classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
 
-  // Use both click and touchend for reliable mobile support
-  var hBtn = document.getElementById('hamburger');
-  hBtn.addEventListener('click', toggleMenu);
-  hBtn.addEventListener('touchend', function(e) { e.preventDefault(); toggleMenu(); });
+  function closeMenu() {
+    hamburger.classList.remove('open');
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
+  }
 
-  // Close menu when nav links clicked
-  ['mnAbout','mnPhil','mnExp','mnInt','mnCon'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('click', toggleMenu);
-      el.addEventListener('touchend', function(e) { e.preventDefault(); toggleMenu(); window.location.href = el.getAttribute('href'); });
+  function toggleMenu() {
+    if (mobileNav.classList.contains('open')) {
+      closeMenu();
+    } else {
+      openMenu();
     }
+  }
+
+  hamburger.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  // Close when nav link is tapped
+  mobileNav.querySelectorAll('a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      closeMenu();
+    });
+  });
+
+  // Close when tapping outside
+  mobileNav.addEventListener('click', function(e) {
+    if (e.target === mobileNav) closeMenu();
   });
 
   document.querySelectorAll('a, button, .exp-nav-item, .philosophy-card, .interest-card, .dice').forEach(el => {
