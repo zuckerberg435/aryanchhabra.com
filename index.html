@@ -642,66 +642,11 @@
   }
 
   /* Mobile */
-  /* Hamburger button */
-  #hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    padding: 10px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    z-index: 300;
-    -webkit-tap-highlight-color: transparent;
-  }
-  #hamburger span {
-    display: block;
-    width: 26px;
-    height: 2px;
-    background: var(--forest);
-  }
 
-  /* Mobile nav overlay */
-  #mobileNav {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: var(--cream);
-    z-index: 299;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 36px;
-  }
-  #mobileNav.open {
-    display: flex;
-  }
-  #closeMenu {
-    position: absolute;
-    top: 24px; right: 24px;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    color: var(--forest);
-    cursor: pointer;
-    padding: 8px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .mnLink {
-    font-family: "Cormorant Garamond", serif;
-    font-size: 2.5rem;
-    font-weight: 400;
-    color: var(--forest);
-    text-decoration: none;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
 
   @media (max-width: 900px) {
     nav { padding: 20px 24px; background: var(--warm-white); }
     .nav-links { display: none; }
-    #hamburger { display: flex; }
     .hero { grid-template-columns: 1fr; min-height: auto; }
     .hero-left { padding: 90px 24px 40px; }
     .hero-name { font-size: clamp(3rem, 12vw, 5rem); }
@@ -757,21 +702,7 @@
     <li><a href="#interests">Interests</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <button id="hamburger" type="button">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
 </nav>
-
-<div id="mobileNav">
-  <button id="closeMenu">&#x2715;</button>
-  <a href="#about" class="mnLink">About</a>
-  <a href="#philosophy" class="mnLink">Philosophy</a>
-  <a href="#experience" class="mnLink">Experience</a>
-  <a href="#interests" class="mnLink">Interests</a>
-  <a href="#contact" class="mnLink">Contact</a>
-</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -974,25 +905,7 @@
 </footer>
 
 <script>
-  // Mobile menu
-  var hamburger = document.getElementById('hamburger');
-  var mobileNav = document.getElementById('mobileNav');
-  var closeMenu = document.getElementById('closeMenu');
 
-  function openNav() {
-    mobileNav.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeNav() {
-    mobileNav.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  hamburger.addEventListener('click', openNav);
-  closeMenu.addEventListener('click', closeNav);
-  document.querySelectorAll('.mnLink').forEach(function(link) {
-    link.addEventListener('click', closeNav);
-  });
 
   // Cursor - desktop only
   var cursor = document.getElementById('cursor');
