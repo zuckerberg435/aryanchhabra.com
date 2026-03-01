@@ -698,6 +698,7 @@
     nav { padding: 20px 24px; background: var(--warm-white); }
     .nav-links { display: none; }
     .hamburger { display: flex; }
+    #hamburger { display: flex !important; }
     .hero { grid-template-columns: 1fr; min-height: auto; }
     .hero-left { padding: 90px 24px 40px; }
     .hero-name { font-size: clamp(3rem, 12vw, 5rem); }
@@ -753,17 +754,20 @@
     <li><a href="#interests">Interests</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <button class="hamburger" id="hamburger" type="button" aria-label="Open menu">
-    <span></span><span></span><span></span>
+  <button id="hamburger" type="button" onclick="toggleMenu()" style="display:none;flex-direction:column;gap:6px;padding:10px;background:none;border:none;cursor:pointer;z-index:9999;position:relative;">
+    <span style="display:block;width:26px;height:2px;background:#1e3a2f;"></span>
+    <span style="display:block;width:26px;height:2px;background:#1e3a2f;"></span>
+    <span style="display:block;width:26px;height:2px;background:#1e3a2f;"></span>
   </button>
 </nav>
 
-<div class="mobile-nav" id="mobileNav">
-  <a href="#about" id="mnAbout">About</a>
-  <a href="#philosophy" id="mnPhil">Philosophy</a>
-  <a href="#experience" id="mnExp">Experience</a>
-  <a href="#interests" id="mnInt">Interests</a>
-  <a href="#contact" id="mnCon">Contact</a>
+<div id="mobileNav" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#faf8f3;z-index:9998;flex-direction:column;align-items:center;justify-content:center;gap:36px;">
+  <button onclick="toggleMenu()" style="position:absolute;top:24px;right:24px;background:none;border:none;font-size:2rem;cursor:pointer;color:#1e3a2f;">✕</button>
+  <a href="#about" onclick="toggleMenu()" style="font-family:Cormorant Garamond,serif;font-size:2.2rem;font-weight:300;color:#1e3a2f;text-decoration:none;letter-spacing:0.05em;">About</a>
+  <a href="#philosophy" onclick="toggleMenu()" style="font-family:Cormorant Garamond,serif;font-size:2.2rem;font-weight:300;color:#1e3a2f;text-decoration:none;letter-spacing:0.05em;">Philosophy</a>
+  <a href="#experience" onclick="toggleMenu()" style="font-family:Cormorant Garamond,serif;font-size:2.2rem;font-weight:300;color:#1e3a2f;text-decoration:none;letter-spacing:0.05em;">Experience</a>
+  <a href="#interests" onclick="toggleMenu()" style="font-family:Cormorant Garamond,serif;font-size:2.2rem;font-weight:300;color:#1e3a2f;text-decoration:none;letter-spacing:0.05em;">Interests</a>
+  <a href="#contact" onclick="toggleMenu()" style="font-family:Cormorant Garamond,serif;font-size:2.2rem;font-weight:300;color:#1e3a2f;text-decoration:none;letter-spacing:0.05em;">Contact</a>
 </div>
 
 <!-- HERO -->
@@ -944,10 +948,10 @@
       </div>
       <span class="contact-link-arrow">→</span>
     </a>
-    <a href="mailto:aryanchhabra3@gmail.com" class="contact-link">
+    <a href="/cdn-cgi/l/email-protection#f8998a8199969b9090999a8a99cbb89f95999194d69b9795" class="contact-link">
       <div>
         <div class="contact-link-label">Email</div>
-        <div class="contact-link-value">aryanchhabra3@gmail.com</div>
+        <div class="contact-link-value"><span class="__cf_email__" data-cfemail="c0a1b2b9a1aea3a8a8a1a2b2a1f380a7ada1a9aceea3afad">[email&#160;protected]</span></div>
       </div>
       <span class="contact-link-arrow">→</span>
     </a>
@@ -966,17 +970,33 @@
   <span>Dehradun → NUS → Deloitte</span>
 </footer>
 
-<script>
-  // Custom cursor - desktop only
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Mobile menu - defined first so onclick always works
+  function toggleMenu() {
+    var nav = document.getElementById('mobileNav');
+    if (nav.style.display === 'flex') {
+      nav.style.display = 'none';
+      document.body.style.overflow = '';
+    } else {
+      nav.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+  }
 
-  if (isTouchDevice) {
-    cursor.style.display = 'none';
-    ring.style.display = 'none';
+  // Show hamburger on mobile
+  if (window.innerWidth <= 900) {
+    var hb = document.getElementById('hamburger');
+    if (hb) hb.style.display = 'flex';
+  }
+
+  // Cursor - desktop only
+  var cursor = document.getElementById('cursor');
+  var ring = document.getElementById('cursorRing');
+  var isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  if (cursor) cursor.style.display = 'none';
+  if (ring) ring.style.display = 'none';
+  if (!isTouchDevice && cursor && ring) {
     document.body.style.cursor = 'auto';
-  } else {
     let mx = 0, my = 0, rx = 0, ry = 0;
     document.addEventListener('mousemove', e => {
       mx = e.clientX; my = e.clientY;
@@ -993,48 +1013,6 @@
     animRing();
   }
 
-  // Hamburger menu
-  // Hamburger menu — reliable cross-browser implementation
-  var hamburger = document.getElementById('hamburger');
-  var mobileNav = document.getElementById('mobileNav');
-
-  function openMenu() {
-    hamburger.classList.add('open');
-    mobileNav.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeMenu() {
-    hamburger.classList.remove('open');
-    mobileNav.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function toggleMenu() {
-    if (mobileNav.classList.contains('open')) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  }
-
-  hamburger.addEventListener('click', function(e) {
-    e.stopPropagation();
-    toggleMenu();
-  });
-
-  // Close when nav link is tapped
-  mobileNav.querySelectorAll('a').forEach(function(link) {
-    link.addEventListener('click', function() {
-      closeMenu();
-    });
-  });
-
-  // Close when tapping outside
-  mobileNav.addEventListener('click', function(e) {
-    if (e.target === mobileNav) closeMenu();
-  });
-
   document.querySelectorAll('a, button, .exp-nav-item, .philosophy-card, .interest-card, .dice').forEach(el => {
     el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
     el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
@@ -1044,11 +1022,3 @@
   document.body.classList.add('js-ready');
   const reveals = document.querySelectorAll('.reveal');
   const obs = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), 100);
-        obs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
-  reveals.forEach
